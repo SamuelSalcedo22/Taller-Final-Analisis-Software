@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sistema de Convenios – Proyección Social UCC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    header {
+      background: linear-gradient(to right, #047857, #065f46);
+      color: white;
+      padding: 16px 32px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    header .titulo {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    header .logo {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #047857;
+      font-weight: 800;
+      font-size: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    header p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: #bbf7d0;
+    }
+
+    main {
+      max-width: 1150px;
+      margin: 24px auto;
+      padding: 0 16px 32px;
+    }
+
+    .breadcrumb {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 12px;
+    }
+
+    .breadcrumb span:first-child {
+      cursor: pointer;
+    }
+
+    .breadcrumb span:first-child:hover {
+      color: #047857;
+    }
+
+    /* Tarjetas resumen */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      border-top: 4px solid transparent;
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 14px;
+      color: #4b5563;
+      font-weight: 600;
+    }
+
+    .card .valor {
+      margin-top: 8px;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .card small {
+      font-size: 11px;
+    }
+
+    .card.vigentes { border-top-color: #10b981; }
+    .card.por-vencer { border-top-color: #facc15; }
+    .card.vencidos { border-top-color: #fb923c; }
+    .card.total { border-top-color: #3b82f6; }
+
+    .card.vigentes .valor { color: #16a34a; }
+    .card.por-vencer .valor { color: #d97706; }
+    .card.vencidos .valor { color: #ea580c; }
+    .card.total .valor { color: #1d4ed8; }
+
+    /* Layout principal: formulario + tabla */
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid #e5e7eb;
+      background: linear-gradient(to right, #ecfdf5, #ffffff);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 16px;
+      color: #064e3b;
+    }
+
+    .panel-header p {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .panel-body {
+      padding: 16px 18px 18px;
+    }
+
+    /* Formulario */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 4px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #d1d5db;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #16a34a;
+      box-shadow: 0 0 0 1px #22c55e33;
+      background: #f9fafb;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .form-actions {
+      margin-top: 8px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primario {
+      background: #16a34a;
+      color: white;
+    }
+
+    .btn-primario:hover {
+      background: #15803d;
+    }
+
+    .btn-secundario {
+      background: white;
+      border: 1px solid #d1d5db;
+      color: #374151;
+    }
+
+    .btn-secundario:hover {
+      background: #f9fafb;
+    }
+
+    /* Tabla */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead {
+      background: #f9fafb;
+    }
+
+    th, td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: left;
+    }
+
+    th {
+      font-size: 11px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:hover td {
+      background: #f9fafb;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge.vigente {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge.por-vencer {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .badge.vencido {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge.estado-flujo {
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    /* Alertas */
+    .alertas-titulo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .alertas-titulo h3 {
+      margin: 0;
+      font-size: 14px;
+      color: #111827;
+    }
+
+    .alertas-lista {
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .alert-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .alert-item:last-child {
+      border-bottom: none;
+    }
+
+    .alert-item strong {
+      display: block;
+      font-size: 13px;
+      color: #111827;
+    }
+
+    .alert-detalle {
+      font-size: 12px;
+      color: #6b7280;
+    }
+
+    .alert-estado {
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-block;
+      margin-top: 2px;
+    }
+
+    .alert-estado.por-vencer {
+      color: #b45309;
+    }
+
+    .alert-estado.vencido {
+      color: #b91c1c;
+    }
+
+    .no-alertas {
+      font-size: 13px;
+      color: #16a34a;
+    }
+  </style>
+</head>
+<body>
+  <!-- ENCABEZADO -->
+  <header>
+    <div class="titulo">
+      <div class="logo">UCC</div>
+      <div>
+        <h1>UNIVERSIDAD COOPERATIVA DE COLOMBIA</h1>
+        <p>Sistema de Gestión de Convenios – Coordinación de Proyección Social</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
+    <div class="breadcrumb">
+      <span>Inicio</span> / <span class="actual">Dashboard de Convenios (Flujo 1)</span>
+    </div>
+
+    <!-- TARJETAS RESUMEN (se calculan con JS) -->
+    <section class="cards">
+      <div class="card total">
+        <h3>Total de Convenios</h3>
+        <div class="valor" id="card-total">0</div>
+        <small>Convenios interinstitucionales registrados en el sistema</small>
+      </div>
+
+      <div class="card vigentes">
+        <h3>Vigentes</h3>
+        <div class="valor" id="card-vigentes">0</div>
+        <small>Convenios con fecha de vencimiento futura</small>
+      </div>
+
+      <div class="card por-vencer">
+        <h3>Por vencer (≤ 30 días)</h3>
+        <div class="valor" id="card-por-vencer">0</div>
+        <small>Requieren análisis de renovación (RF-003)</small>
+      </div>
+
+      <div class="card vencidos">
+        <h3>Vencidos</h3>
+        <div class="valor" id="card-vencidos">0</div>
+        <small>Convenios que ya no están vigentes</small>
+      </div>
+    </section>
+
+    <!-- FORMULARIO + TABLA / ALERTAS -->
+    <section class="layout">
+      <!-- FORMULARIO: REGISTRO DE CONVENIOS (RF-001) -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Registrar Convenio Interinstitucional</h2>
+            <p>Formulario simplificado para el flujo 1: registro básico de convenios y fecha de vencimiento.</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <form id="form-convenio">
+            <div class="form-grid">
+              <div>
+                <label>Entidad Aliada *</label>
+                <input type="text" id="empresa" placeholder="Ej: ABC Construcciones S.A." required />
+              </div>
+              <div class="form-row">
+                <div>
+                  <label>Número / Código de Convenio *</label>
+                  <input type="text" id="numero" placeholder="Ej: 2024-001" required />
+                </div>
+                <div>
+                  <label>Tipo de Convenio *</label>
+                  <select id="tipo" required>
+                    <option value="">Seleccione...</option>
+                    <option>Marco Interinstitucional</option>
+                    <option>Prácticas Profesionales</option>
+                    <option>Convenio Específico</option>
+                    <option>Investigación / Académico</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div>
+                  <label>Fecha de Inicio</label>
+                  <input type="date" id="fechaInicio" />
+                </div>
+                <div>
+                  <label>Fecha de Vencimiento *</label>
+                  <input type="date" id="fechaVencimiento" required />
+                </div>
+              </div>
+              <div>
+                <label>Estado del Flujo (Flujo 1)</label>
+                <select id="estadoFlujo">
+                  <option>Activo</option>
+                  <option>En revisión jurídica</option>
+                  <option>En VoBo Rectoría Campus</option>
+                  <option>En VoBo Rectoría Nacional</option>
+                  <option>Vencido</option>
+                </select>
+              </div>
+              <div>
+                <label>Observaciones (opcional)</label>
+                <textarea id="observaciones" placeholder="Notas sobre el convenio o decisiones de aprobación..."></textarea>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn btn-secundario" onclick="limpiarFormulario()">Limpiar</button>
+              <button type="submit" class="btn btn-primario">Registrar Convenio</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- TABLA + ALERTAS (RF-003) -->
+      <div class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Convenios Registrados y Alertas de Vencimiento</h2>
+            <p>Visualización de convenios interinstitucionales y cálculo automático del estado.</p>
+          </div>
+        </div>
+        <div class="panel-body">
+          <table>
+            <thead>
+              <tr>
+                <th>Entidad</th>
+                <th>Número</th>
+                <th>Tipo</th>
+                <th>Vence</th>
+                <th>Días</th>
+                <th>Estado</th>
+                <th>Flujo</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-convenios">
+              <!-- Se llena por JavaScript -->
+            </tbody>
+          </table>
+
+          <div style="margin-top: 16px;">
+            <div class="alertas-titulo">
+              <h3>Alertas de Convenios por vencer / vencidos</h3>
+              <button class="btn btn-primario" type="button" onclick="recalcularAlertas()">
+                Recalcular según fecha actual
+              </button>
+            </div>
+            <div class="alertas-lista" id="lista-alertas">
+              <!-- Alertas dinámicas -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  
+  <script>
+   
+    const convenios = [
+      {
+        empresa: "Nariño Construcciones S.A.",
+        numero: "RUT 2024-001",
+        tipo: "Marco Interinstitucional",
+        fechaInicio: "2024-11-23",
+        vencimiento: "2025-11-25",
+        estadoFlujo: "Activo",
+        observaciones: "Pronto a vencer"
+      },
+      {
+        empresa: "Cedenar Servicios Ltda.",
+        numero: "RUT-2024-045",
+        tipo: "Prácticas Profesionales",
+        fechaInicio: "2024-12-03",
+        vencimiento: "2025-11-30",
+        estadoFlujo: "Activo",
+        observaciones: ""
+      },
+      {
+        empresa: "Bancolombia Corp.",
+        numero: "CT-2024-078",
+        tipo: "Convenio Específico",
+        fechaInicio: "2024-11-10",
+        vencimiento: "2025-11-10", // asumimos que ya venció según la fecha en la que estamos
+        estadoFlujo: "Vencido",
+        observaciones: "Pendiente decisión de renovación o eliminación"
+      },
+      {
+       empresa: "Bamboo.",
+        numero: "CT-2022-111",
+        tipo: "Prácticas Profesionales",
+        fechaInicio: "2025-11-10",
+        vencimiento: "2026-06-10",
+        estadoFlujo: "Vigente",
+        observaciones: ""
+      },
+      {
+        empresa: "Zemoga S.A",
+        numero: "RUT-2322-031",
+        tipo: "Prácticas Profesionales",
+        fechaInicio: "2025-06-01",
+        vencimiento: "2025-11-20",
+        estadoFlujo: "Vencido",
+        observaciones: "Pendiente decisión de renovación o eliminación"
+      }
+    ];
+
+    // Función de cálculo de estado (lógica de RF-003)
+    function calcularEstadoConvenio(fechaVencimientoStr) {
+      const hoy = new Date();
+      const fv = new Date(fechaVencimientoStr);
+      fv.setHours(0,0,0,0);
+      hoy.setHours(0,0,0,0);
+
+      const msDia = 1000 * 60 * 60 * 24;
+      const diffDias = Math.round((fv - hoy) / msDia);
+
+      let estado = "Vigente";
+      if (diffDias < 0) {
+        estado = "Vencido";
+      } else if (diffDias <= 30) {
+        estado = "Por vencer";
+      }
+
+      return { estado, dias: diffDias };
+    }
+
+    function cargarTabla() {
+      const tbody = document.getElementById("tabla-convenios");
+      tbody.innerHTML = "";
+
+      let total = convenios.length;
+      let totalVigentes = 0;
+      let totalPorVencer = 0;
+      let totalVencidos = 0;
+
+      convenios.forEach(conv => {
+        const info = calcularEstadoConvenio(conv.vencimiento);
+
+        if (info.estado === "Vigente") totalVigentes++;
+        if (info.estado === "Por vencer") totalPorVencer++;
+        if (info.estado === "Vencido") totalVencidos++;
+
+        const tr = document.createElement("tr");
+
+        const tdEmpresa = document.createElement("td");
+        tdEmpresa.textContent = conv.empresa;
+
+        const tdNumero = document.createElement("td");
+        tdNumero.textContent = conv.numero;
+
+        const tdTipo = document.createElement("td");
+        tdTipo.textContent = conv.tipo;
+
+        const tdFecha = document.createElement("td");
+        tdFecha.textContent = conv.vencimiento;
+
+        const tdDias = document.createElement("td");
+        if (info.dias < 0) {
+          tdDias.textContent = `Hace ${Math.abs(info.dias)} días`;
+        } else {
+          tdDias.textContent = `${info.dias} días`;
+        }
+
+        const tdEstado = document.createElement("td");
+        const spanEstado = document.createElement("span");
+        spanEstado.classList.add("badge");
+        if (info.estado === "Vigente") {
+          spanEstado.classList.add("vigente");
+        } else if (info.estado === "Por vencer") {
+          spanEstado.classList.add("por-vencer");
+        } else {
+          spanEstado.classList.add("vencido");
+        }
+        spanEstado.textContent = info.estado;
+        tdEstado.appendChild(spanEstado);
+
+        const tdFlujo = document.createElement("td");
+        const spanFlujo = document.createElement("span");
+        spanFlujo.classList.add("badge", "estado-flujo");
+        spanFlujo.textContent = conv.estadoFlujo;
+        tdFlujo.appendChild(spanFlujo);
+
+        tr.appendChild(tdEmpresa);
+        tr.appendChild(tdNumero);
+        tr.appendChild(tdTipo);
+        tr.appendChild(tdFecha);
+        tr.appendChild(tdDias);
+        tr.appendChild(tdEstado);
+        tr.appendChild(tdFlujo);
+
+        tbody.appendChild(tr);
+      });
+
+      // Actualizar tarjetas resumen
+      document.getElementById("card-total").textContent = total;
+      document.getElementById("card-vigentes").textContent = totalVigentes;
+      document.getElementById("card-por-vencer").textContent = totalPorVencer;
+      document.getElementById("card-vencidos").textContent = totalVencidos;
+
+      // Cargar alertas
+      cargarAlertas();
+    }
+
+    function cargarAlertas() {
+      const contAlertas = document.getElementById("lista-alertas");
+      contAlertas.innerHTML = "";
+
+      const alertas = [];
+
+      convenios.forEach(conv => {
+        const info = calcularEstadoConvenio(conv.vencimiento);
+        if (info.estado === "Por vencer" || info.estado === "Vencido") {
+          alertas.push({ ...conv, ...info });
+        }
+      });
+
+      if (alertas.length === 0) {
+        const p = document.createElement("p");
+        p.classList.add("no-alertas");
+        p.textContent = "No hay convenios por vencer ni vencidos. ✔";
+        contAlertas.appendChild(p);
+        return;
+      }
+
+      alertas.forEach(a => {
+        const div = document.createElement("div");
+        div.classList.add("alert-item");
+
+        const titulo = document.createElement("strong");
+        titulo.textContent = `${a.empresa} (#${a.numero})`;
+        div.appendChild(titulo);
+
+        const detalle = document.createElement("div");
+        detalle.classList.add("alert-detalle");
+
+        const spanEstado = document.createElement("span");
+        spanEstado.classList.add("alert-estado");
+        if (a.estado === "Por vencer") {
+          spanEstado.classList.add("por-vencer");
+          spanEstado.textContent = `Por vencer en ${a.dias} días (vence el ${a.vencimiento})`;
+        } else {
+          spanEstado.classList.add("vencido");
+          spanEstado.textContent = `Vencido hace ${Math.abs(a.dias)} días (venció el ${a.vencimiento})`;
+        }
+
+        detalle.appendChild(spanEstado);
+        div.appendChild(detalle);
+
+        contAlertas.appendChild(div);
+      });
+    }
+
+    function recalcularAlertas() {
+      cargarTabla();
+      alert("Alertas recalculadas según la fecha actual del sistema.");
+    }
+
+    // Manejo del formulario (RF-001)
+    function limpiarFormulario() {
+      document.getElementById("form-convenio").reset();
+    }
+
+    document.getElementById("form-convenio").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const empresa = document.getElementById("empresa").value.trim();
+      const numero = document.getElementById("numero").value.trim();
+      const tipo = document.getElementById("tipo").value;
+      const fechaInicio = document.getElementById("fechaInicio").value;
+      const fechaVencimiento = document.getElementById("fechaVencimiento").value;
+      const estadoFlujo = document.getElementById("estadoFlujo").value;
+      const observaciones = document.getElementById("observaciones").value.trim();
+
+      if (!empresa || !numero || !tipo || !fechaVencimiento) {
+        alert("Por favor complete todos los campos obligatorios (*)");
+        return;
+      }
+
+      // Agregar nuevo convenio a la lista
+      convenios.push({
+        empresa,
+        numero,
+        tipo,
+        fechaInicio,
+        vencimiento: fechaVencimiento,
+        estadoFlujo,
+        observaciones
+      });
+
+      limpiarFormulario();
+      cargarTabla();
+      alert("Convenio registrado correctamente.");
+    });
+
+    // Inicializar
+    cargarTabla();
+  </script>
+</body>
+</html>
